@@ -14,6 +14,27 @@ export interface AuthState {
   isLoading: boolean
 }
 
+// Initialize default admin user if none exists
+export const initializeDefaultAdmin = async () => {
+  const users = await spark.kv.get<User[]>('users') || []
+  const adminExists = users.some(user => user.role === 'Admin')
+  
+  if (!adminExists) {
+    const adminUser: User = {
+      id: 'admin_default',
+      email: 'admin@agrofund.com',
+      role: 'Admin',
+      name: 'System Administrator'
+    }
+    
+    await spark.kv.set('users', [...users, adminUser])
+    
+    const passwords = await spark.kv.get<Record<string, string>>('passwords') || {}
+    passwords[adminUser.id] = 'admin123'
+    await spark.kv.set('passwords', passwords)
+  }
+}
+
 export function useAuth() {
   const [currentUser, setCurrentUser] = useKV<User | null>('current-user', null)
   const [isLoading, setIsLoading] = useKV<boolean>('auth-loading', false)

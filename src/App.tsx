@@ -1,14 +1,18 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { LoginScreen } from '@/components/auth/LoginScreen'
 import { RegisterScreen } from '@/components/auth/RegisterScreen'
 import { FarmerDashboard } from '@/components/dashboards/FarmerDashboard'
 import { InvestorDashboard } from '@/components/dashboards/InvestorDashboard'
 import { AdminDashboard } from '@/components/dashboards/AdminDashboard'
-import { useAuth } from '@/lib/auth'
+import { useAuth, initializeDefaultAdmin } from '@/lib/auth'
 
 function App() {
   const { user, isLoading } = useAuth()
   const [showRegister, setShowRegister] = useState(false)
+
+  useEffect(() => {
+    initializeDefaultAdmin()
+  }, [])
 
   if (isLoading) {
     return (
