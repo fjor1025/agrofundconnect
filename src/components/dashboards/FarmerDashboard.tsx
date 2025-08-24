@@ -8,9 +8,11 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Plus, Sprout, DollarSign, Calendar, PencilSimple, SignOut } from '@phosphor-icons/react'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Plus, Sprout, DollarSign, Calendar, PencilSimple, SignOut, BarChart, FolderOpen } from '@phosphor-icons/react'
 import { useAuth } from '@/lib/auth'
 import { useProjects, type Project } from '@/lib/projects'
+import { FarmerAnalytics } from '@/components/FarmerAnalytics'
 import { toast } from 'sonner'
 
 export function FarmerDashboard() {
@@ -18,6 +20,7 @@ export function FarmerDashboard() {
   const { projects, createProject, updateProject, getProjectsByFarmer } = useProjects()
   const [showCreateDialog, setShowCreateDialog] = useState(false)
   const [editingProject, setEditingProject] = useState<Project | null>(null)
+  const [activeTab, setActiveTab] = useState('projects')
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -117,19 +120,32 @@ export function FarmerDashboard() {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-2xl font-bold">Your Projects</h2>
-            <p className="text-muted-foreground">Manage your funding projects</p>
-          </div>
-          <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus size={16} className="mr-2" />
-                Create Project
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-2xl">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="projects" className="flex items-center gap-2">
+              <FolderOpen size={16} />
+              My Projects
+            </TabsTrigger>
+            <TabsTrigger value="analytics" className="flex items-center gap-2">
+              <BarChart size={16} />
+              Analytics
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="projects" className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold">Your Projects</h2>
+                <p className="text-muted-foreground">Manage your funding projects</p>
+              </div>
+              <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+                <DialogTrigger asChild>
+                  <Button>
+                    <Plus size={16} className="mr-2" />
+                    Create Project
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl">
               <DialogHeader>
                 <DialogTitle>Create New Project</DialogTitle>
                 <DialogDescription>
@@ -282,6 +298,12 @@ export function FarmerDashboard() {
             })}
           </div>
         )}
+          </TabsContent>
+          
+          <TabsContent value="analytics">
+            <FarmerAnalytics />
+          </TabsContent>
+        </Tabs>
 
         <Dialog open={!!editingProject} onOpenChange={(open) => !open && setEditingProject(null)}>
           <DialogContent className="max-w-2xl">

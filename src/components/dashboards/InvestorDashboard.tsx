@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
@@ -7,9 +7,12 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Sprout, DollarSign, Calendar, TrendUp, SignOut, Search, SlidersHorizontal } from '@phosphor-icons/react'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Sprout, DollarSign, Calendar, TrendUp, SignOut, Search, SlidersHorizontal, Portfolio, ChartLine, TestTube } from '@phosphor-icons/react'
 import { useAuth } from '@/lib/auth'
 import { useProjects, type Project } from '@/lib/projects'
+import { PortfolioTracker } from '@/components/PortfolioTracker'
+import { createDemoInvestments } from '@/lib/demoData'
 import { toast } from 'sonner'
 
 export function InvestorDashboard() {
@@ -20,8 +23,26 @@ export function InvestorDashboard() {
   const [searchTerm, setSearchTerm] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('all')
   const [showFilters, setShowFilters] = useState(false)
+  const [activeTab, setActiveTab] = useState('discover')
 
   const approvedProjects = getApprovedProjects()
+  
+  // Initialize demo data on component mount if needed
+  useEffect(() => {
+    createDemoInvestments()
+  }, [])
+  
+  const handleLoadDemoData = async () => {
+    try {
+      await createDemoInvestments()
+      toast.success('Demo investment data loaded successfully!')
+      // Force a re-render by updating a state
+      setSearchTerm(searchTerm + ' ')
+      setTimeout(() => setSearchTerm(searchTerm.trim()), 100)
+    } catch (error) {
+      toast.error('Failed to load demo data')
+    }
+  }
   
   const filteredProjects = approvedProjects.filter(project => {
     const matchesSearch = project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -79,148 +100,173 @@ export function InvestorDashboard() {
               <p className="text-sm text-muted-foreground">Welcome back, {user?.name}</p>
             </div>
           </div>
-          <Button variant="outline" onClick={logout} size="sm">
-            <SignOut size={16} className="mr-2" />
-            Logout
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={handleLoadDemoData} size="sm">
+              <TestTube size={16} className="mr-2" />
+              Load Demo Data
+            </Button>
+            <Button variant="outline" onClick={logout} size="sm">
+              <SignOut size={16} className="mr-2" />
+              Logout
+            </Button>
+          </div>
         </div>
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-2xl font-bold">Investment Opportunities</h2>
-            <p className="text-muted-foreground">Discover and fund agricultural projects</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder="Search projects..."
-                className="pl-10 w-64"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            <Button
-              variant="outline"
-              onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-2"
-            >
-              <SlidersHorizontal size={16} />
-              Filters
-            </Button>
-          </div>
-        </div>
-
-        {showFilters && (
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle className="text-lg">Filters</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center gap-4">
-                <div className="space-y-2">
-                  <Label>Category</Label>
-                  <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                    <SelectTrigger className="w-48">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map(category => (
-                        <SelectItem key={category} value={category}>
-                          {category === 'all' ? 'All Categories' : category}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="discover" className="flex items-center gap-2">
+              <Search size={16} />
+              Discover Projects
+            </TabsTrigger>
+            <TabsTrigger value="portfolio" className="flex items-center gap-2">
+              <Portfolio size={16} />
+              My Portfolio
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="discover" className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold">Investment Opportunities</h2>
+                <p className="text-muted-foreground">Discover and fund agricultural projects</p>
               </div>
-            </CardContent>
-          </Card>
-        )}
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    placeholder="Search projects..."
+                    className="pl-10 w-64"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="flex items-center gap-2"
+                >
+                  <SlidersHorizontal size={16} />
+                  Filters
+                </Button>
+              </div>
+            </div>
 
-        {filteredProjects.length === 0 ? (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-12">
-              <Sprout size={48} className="text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No projects found</h3>
-              <p className="text-muted-foreground text-center">
-                {searchTerm || categoryFilter !== 'all' 
-                  ? 'Try adjusting your search or filters'
-                  : 'No approved projects available for investment yet'
-                }
-              </p>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {filteredProjects.map((project) => {
-              const fundingPercentage = (project.raisedAmount / project.goalAmount) * 100
-              const remainingAmount = project.goalAmount - project.raisedAmount
-              
-              return (
-                <Card key={project.id} className="cursor-pointer hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <CardTitle className="text-lg">{project.title}</CardTitle>
-                        <CardDescription className="flex items-center gap-2">
-                          <Badge variant="secondary">{project.category}</Badge>
-                          <span>by {project.farmerName}</span>
-                        </CardDescription>
-                      </div>
+            {showFilters && (
+              <Card className="mb-6">
+                <CardHeader>
+                  <CardTitle className="text-lg">Filters</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center gap-4">
+                    <div className="space-y-2">
+                      <Label>Category</Label>
+                      <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                        <SelectTrigger className="w-48">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {categories.map(category => (
+                            <SelectItem key={category} value={category}>
+                              {category === 'all' ? 'All Categories' : category}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
-                      {project.description}
-                    </p>
-                    
-                    <div className="space-y-4">
-                      <div>
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium">Progress</span>
-                          <span className="text-sm text-muted-foreground">
-                            {fundingPercentage.toFixed(1)}%
-                          </span>
-                        </div>
-                        <Progress value={fundingPercentage} className="h-2" />
-                        <div className="flex items-center justify-between mt-2 text-sm">
-                          <span className="text-muted-foreground">
-                            ${project.raisedAmount.toLocaleString()} raised
-                          </span>
-                          <span className="font-medium">
-                            ${project.goalAmount.toLocaleString()} goal
-                          </span>
-                        </div>
-                      </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
-                      <div className="flex items-center justify-between text-sm text-muted-foreground">
-                        <div className="flex items-center gap-1">
-                          <Calendar size={14} />
-                          {new Date(project.createdAt).toLocaleDateString()}
+            {filteredProjects.length === 0 ? (
+              <Card>
+                <CardContent className="flex flex-col items-center justify-center py-12">
+                  <Sprout size={48} className="text-muted-foreground mb-4" />
+                  <h3 className="text-lg font-semibold mb-2">No projects found</h3>
+                  <p className="text-muted-foreground text-center">
+                    {searchTerm || categoryFilter !== 'all' 
+                      ? 'Try adjusting your search or filters'
+                      : 'No approved projects available for investment yet'
+                    }
+                  </p>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {filteredProjects.map((project) => {
+                  const fundingPercentage = (project.raisedAmount / project.goalAmount) * 100
+                  const remainingAmount = project.goalAmount - project.raisedAmount
+                  
+                  return (
+                    <Card key={project.id} className="cursor-pointer hover:shadow-lg transition-shadow">
+                      <CardHeader>
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <CardTitle className="text-lg">{project.title}</CardTitle>
+                            <CardDescription className="flex items-center gap-2">
+                              <Badge variant="secondary">{project.category}</Badge>
+                              <span>by {project.farmerName}</span>
+                            </CardDescription>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-1">
-                          <TrendUp size={14} />
-                          ${remainingAmount.toLocaleString()} needed
-                        </div>
-                      </div>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
+                          {project.description}
+                        </p>
+                        
+                        <div className="space-y-4">
+                          <div>
+                            <div className="flex items-center justify-between mb-2">
+                              <span className="text-sm font-medium">Progress</span>
+                              <span className="text-sm text-muted-foreground">
+                                {fundingPercentage.toFixed(1)}%
+                              </span>
+                            </div>
+                            <Progress value={fundingPercentage} className="h-2" />
+                            <div className="flex items-center justify-between mt-2 text-sm">
+                              <span className="text-muted-foreground">
+                                ${project.raisedAmount.toLocaleString()} raised
+                              </span>
+                              <span className="font-medium">
+                                ${project.goalAmount.toLocaleString()} goal
+                              </span>
+                            </div>
+                          </div>
 
-                      <Button 
-                        className="w-full" 
-                        onClick={() => openProjectDetail(project)}
-                        disabled={remainingAmount <= 0}
-                      >
-                        {remainingAmount <= 0 ? 'Fully Funded' : 'Fund Project'}
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              )
-            })}
-          </div>
-        )}
+                          <div className="flex items-center justify-between text-sm text-muted-foreground">
+                            <div className="flex items-center gap-1">
+                              <Calendar size={14} />
+                              {new Date(project.createdAt).toLocaleDateString()}
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <TrendUp size={14} />
+                              ${remainingAmount.toLocaleString()} needed
+                            </div>
+                          </div>
+
+                          <Button 
+                            className="w-full" 
+                            onClick={() => openProjectDetail(project)}
+                            disabled={remainingAmount <= 0}
+                          >
+                            {remainingAmount <= 0 ? 'Fully Funded' : 'Fund Project'}
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )
+                })}
+              </div>
+            )}
+          </TabsContent>
+          
+          <TabsContent value="portfolio">
+            <PortfolioTracker />
+          </TabsContent>
+        </Tabs>
 
         <Dialog open={!!selectedProject} onOpenChange={(open) => !open && setSelectedProject(null)}>
           <DialogContent className="max-w-2xl">
