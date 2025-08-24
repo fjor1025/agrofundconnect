@@ -100,54 +100,65 @@ export function FarmerDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b bg-card">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <Sprout size={20} className="text-primary-foreground" />
+    <div className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-primary/5">
+      <header className="border-b bg-card/80 backdrop-blur-lg shadow-lg">
+        <div className="container mx-auto px-6 py-6 flex items-center justify-between">
+          <div className="flex items-center gap-4 animate-fade-in">
+            <div className="w-12 h-12 gradient-primary rounded-2xl flex items-center justify-center shadow-glow">
+              <Sprout size={24} className="text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-xl font-bold">Farmer Dashboard</h1>
+              <h1 className="text-2xl font-bold text-gradient">Farmer Dashboard</h1>
               <p className="text-sm text-muted-foreground">Welcome back, {user?.name}</p>
             </div>
           </div>
-          <Button variant="outline" onClick={logout} size="sm">
-            <SignOut size={16} className="mr-2" />
+          <Button 
+            variant="outline" 
+            onClick={logout} 
+            size="lg"
+            className="hover-lift border-2 hover:border-destructive/50 hover:text-destructive transition-all duration-200"
+          >
+            <SignOut size={18} className="mr-2" />
             Logout
           </Button>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="projects" className="flex items-center gap-2">
-              <FolderOpen size={16} />
+      <main className="container mx-auto px-6 py-8">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
+          <TabsList className="grid w-full grid-cols-2 p-1 bg-card/50 backdrop-blur-sm border shadow-md">
+            <TabsTrigger 
+              value="projects" 
+              className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all duration-200 hover-scale"
+            >
+              <FolderOpen size={18} />
               My Projects
             </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex items-center gap-2">
-              <BarChart size={16} />
+            <TabsTrigger 
+              value="analytics" 
+              className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all duration-200 hover-scale"
+            >
+              <BarChart size={18} />
               Analytics
             </TabsTrigger>
           </TabsList>
           
-          <TabsContent value="projects" className="space-y-6">
+          <TabsContent value="projects" className="space-y-8 animate-fade-in">
             <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-2xl font-bold">Your Projects</h2>
-                <p className="text-muted-foreground">Manage your funding projects</p>
+              <div className="animate-slide-up">
+                <h2 className="text-3xl font-bold text-gradient mb-2">Your Projects</h2>
+                <p className="text-muted-foreground text-lg">Manage your funding projects and track their progress</p>
               </div>
               <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
                 <DialogTrigger asChild>
-                  <Button>
-                    <Plus size={16} className="mr-2" />
+                  <Button className="btn-primary shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 text-lg px-6 py-3">
+                    <Plus size={20} className="mr-2" />
                     Create Project
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-2xl">
+                <DialogContent className="max-w-2xl glass-effect">
               <DialogHeader>
-                <DialogTitle>Create New Project</DialogTitle>
+                <DialogTitle className="text-2xl font-bold text-gradient">Create New Project</DialogTitle>
                 <DialogDescription>
                   Submit your project for funding consideration
                 </DialogDescription>
@@ -222,71 +233,94 @@ export function FarmerDashboard() {
         </div>
 
         {farmerProjects.length === 0 ? (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-12">
-              <Sprout size={48} className="text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No projects yet</h3>
-              <p className="text-muted-foreground text-center mb-4">
-                Create your first project to start receiving funding from investors
+          <Card className="card-hover animate-scale-in">
+            <CardContent className="flex flex-col items-center justify-center py-16">
+              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center mb-6 animate-bounce-gentle">
+                <Sprout size={40} className="text-primary" />
+              </div>
+              <h3 className="text-2xl font-bold text-gradient mb-3">No projects yet</h3>
+              <p className="text-muted-foreground text-center mb-6 max-w-md text-lg leading-relaxed">
+                Create your first project to start receiving funding from investors and bring your agricultural vision to life
               </p>
-              <Button onClick={() => setShowCreateDialog(true)}>
-                <Plus size={16} className="mr-2" />
+              <Button 
+                onClick={() => setShowCreateDialog(true)}
+                className="btn-primary shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 text-lg px-8 py-3"
+              >
+                <Plus size={20} className="mr-2" />
                 Create Your First Project
               </Button>
             </CardContent>
           </Card>
         ) : (
-          <div className="grid gap-6">
-            {farmerProjects.map((project) => {
+          <div className="grid gap-8">
+            {farmerProjects.map((project, index) => {
               const fundingPercentage = (project.raisedAmount / project.goalAmount) * 100
               
               return (
-                <Card key={project.id}>
-                  <CardHeader>
+                <Card 
+                  key={project.id} 
+                  className="card-hover animate-slide-up gradient-card shadow-lg"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  <CardHeader className="pb-4">
                     <div className="flex items-start justify-between">
-                      <div>
-                        <CardTitle className="flex items-center gap-2">
+                      <div className="flex-1">
+                        <CardTitle className="flex items-center gap-3 text-xl mb-2">
                           {project.title}
-                          <Badge className={getStatusColor(project.status)}>
+                          <Badge className={`${getStatusColor(project.status)} shadow-sm font-medium px-3 py-1`}>
                             {project.status}
                           </Badge>
                         </CardTitle>
-                        <CardDescription>{project.category}</CardDescription>
+                        <CardDescription className="text-base text-muted-foreground">{project.category}</CardDescription>
                       </div>
                       <Button
                         variant="outline"
-                        size="sm"
+                        size="lg"
                         onClick={() => openEditDialog(project)}
                         disabled={project.status === 'approved'}
+                        className="hover-lift border-2 hover:border-primary/50"
                       >
-                        <PencilSimple size={16} className="mr-2" />
+                        <PencilSimple size={18} className="mr-2" />
                         Edit
                       </Button>
                     </div>
                   </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-muted-foreground mb-4">{project.description}</p>
+                  <CardContent className="pt-0">
+                    <p className="text-muted-foreground mb-6 leading-relaxed">{project.description}</p>
                     
-                    <div className="space-y-4">
-                      <div>
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium">Funding Progress</span>
-                          <span className="text-sm text-muted-foreground">
-                            ${project.raisedAmount.toLocaleString()} / ${project.goalAmount.toLocaleString()}
-                          </span>
+                    <div className="space-y-6">
+                      <div className="bg-muted/30 rounded-xl p-4 backdrop-blur-sm">
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="font-semibold text-foreground">Funding Progress</span>
+                          <div className="text-right">
+                            <div className="text-lg font-bold text-primary">
+                              ${project.raisedAmount.toLocaleString()}
+                            </div>
+                            <div className="text-sm text-muted-foreground">
+                              of ${project.goalAmount.toLocaleString()}
+                            </div>
+                          </div>
                         </div>
-                        <Progress value={fundingPercentage} className="h-2" />
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {fundingPercentage.toFixed(1)}% funded
-                        </p>
+                        <Progress 
+                          value={fundingPercentage} 
+                          className="h-3 bg-background/50" 
+                        />
+                        <div className="flex justify-between items-center mt-2">
+                          <p className="text-sm font-medium text-primary">
+                            {fundingPercentage.toFixed(1)}% funded
+                          </p>
+                          {fundingPercentage >= 100 && (
+                            <Badge className="bg-green-100 text-green-800">Fully Funded!</Badge>
+                          )}
+                        </div>
                       </div>
                       
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                        <div className="flex items-center gap-1">
-                          <Calendar size={14} />
+                      <div className="flex items-center gap-6 text-sm text-muted-foreground">
+                        <div className="flex items-center gap-2">
+                          <Calendar size={16} />
                           Created {new Date(project.createdAt).toLocaleDateString()}
                         </div>
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-2">
                           <DollarSign size={14} />
                           Goal: ${project.goalAmount.toLocaleString()}
                         </div>

@@ -50,43 +50,48 @@ export function RegisterScreen({ onSwitch }: RegisterScreenProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="mx-auto mb-4 w-12 h-12 bg-primary rounded-full flex items-center justify-center">
-            <Sprout size={24} className="text-primary-foreground" />
+    <div className="min-h-screen bg-gradient-to-br from-secondary/10 via-background to-primary/10 flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute top-32 right-32 w-40 h-40 rounded-full bg-gradient-to-br from-secondary/30 to-transparent animate-bounce-gentle"></div>
+        <div className="absolute bottom-32 left-32 w-56 h-56 rounded-full bg-gradient-to-br from-primary/20 to-transparent animate-bounce-gentle" style={{ animationDelay: '1.5s' }}></div>
+        <div className="absolute top-1/3 left-16 w-24 h-24 rounded-full bg-gradient-to-br from-accent/30 to-transparent animate-bounce-gentle" style={{ animationDelay: '0.8s' }}></div>
+      </div>
+
+      <Card className="w-full max-w-md glass-effect shadow-xl animate-slide-up hover-lift relative z-10">
+        <CardHeader className="text-center pb-6">
+          <div className="mx-auto mb-6 w-16 h-16 gradient-secondary rounded-2xl flex items-center justify-center shadow-glow animate-scale-in">
+            <Sprout size={32} className="text-secondary-foreground" />
           </div>
-          <CardTitle className="text-2xl font-bold">Join AgroFundConnect</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-3xl font-bold text-gradient mb-2">Join AgroFundConnect</CardTitle>
+          <CardDescription className="text-base">
             Create an account to connect farmers with investors
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
+        <CardContent className="pt-0">
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="form-floating">
               <div className="relative">
-                <User size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+                <User size={18} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground z-10" />
                 <Input
                   id="name"
                   type="text"
                   placeholder="Enter your full name"
-                  className="pl-10"
+                  className="pl-12 h-12 border-2 transition-all duration-200 focus:border-secondary focus:shadow-glow bg-card/50 backdrop-blur-sm"
                   value={formData.name}
                   onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                 />
               </div>
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+            <div className="form-floating">
               <div className="relative">
-                <Mail size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+                <Mail size={18} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground z-10" />
                 <Input
                   id="email"
                   type="email"
                   placeholder="Enter your email"
-                  className="pl-10"
+                  className="pl-12 h-12 border-2 transition-all duration-200 focus:border-secondary focus:shadow-glow bg-card/50 backdrop-blur-sm"
                   value={formData.email}
                   onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                 />
@@ -94,50 +99,69 @@ export function RegisterScreen({ onSwitch }: RegisterScreenProps) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="role">Role</Label>
+              <Label htmlFor="role" className="text-sm font-medium">Role</Label>
               <Select value={formData.role} onValueChange={(value: UserRole) => setFormData(prev => ({ ...prev, role: value }))}>
-                <SelectTrigger>
+                <SelectTrigger className="h-12 border-2 transition-all duration-200 focus:border-secondary bg-card/50 backdrop-blur-sm">
                   <SelectValue placeholder="Select your role" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Farmer">Farmer - Seeking Funding</SelectItem>
-                  <SelectItem value="Investor">Investor - Providing Funding</SelectItem>
+                <SelectContent className="glass-effect">
+                  <SelectItem value="Farmer" className="hover:bg-primary/10 cursor-pointer">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-primary"></div>
+                      Farmer - Seeking Funding
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="Investor" className="hover:bg-accent/10 cursor-pointer">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 rounded-full bg-accent"></div>
+                      Investor - Providing Funding
+                    </div>
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+            <div className="form-floating">
               <div className="relative">
-                <Lock size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+                <Lock size={18} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground z-10" />
                 <Input
                   id="password"
                   type="password"
                   placeholder="Create a password"
-                  className="pl-10"
+                  className="pl-12 h-12 border-2 transition-all duration-200 focus:border-secondary focus:shadow-glow bg-card/50 backdrop-blur-sm"
                   value={formData.password}
                   onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
+            <div className="form-floating">
               <div className="relative">
-                <Lock size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+                <Lock size={18} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground z-10" />
                 <Input
                   id="confirmPassword"
                   type="password"
                   placeholder="Confirm your password"
-                  className="pl-10"
+                  className="pl-12 h-12 border-2 transition-all duration-200 focus:border-secondary focus:shadow-glow bg-card/50 backdrop-blur-sm"
                   value={formData.confirmPassword}
                   onChange={(e) => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
                 />
               </div>
             </div>
 
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Creating Account...' : 'Create Account'}
+            <Button 
+              type="submit" 
+              className="w-full h-12 gradient-secondary text-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200" 
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  Creating Account...
+                </div>
+              ) : (
+                'Create Account'
+              )}
             </Button>
           </form>
 
@@ -147,7 +171,7 @@ export function RegisterScreen({ onSwitch }: RegisterScreenProps) {
               <button
                 type="button"
                 onClick={onSwitch}
-                className="font-medium text-primary hover:underline"
+                className="font-semibold text-secondary hover:text-secondary/80 transition-colors duration-200 hover:underline decoration-2 underline-offset-2"
               >
                 Sign in
               </button>

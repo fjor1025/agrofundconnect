@@ -88,56 +88,72 @@ export function InvestorDashboard() {
   const categories = ['all', 'Crops', 'Livestock', 'Equipment', 'Organic', 'Technology']
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b bg-card">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <Sprout size={20} className="text-primary-foreground" />
+    <div className="min-h-screen bg-gradient-to-br from-background via-secondary/5 to-accent/10">
+      <header className="border-b bg-card/80 backdrop-blur-lg shadow-lg">
+        <div className="container mx-auto px-6 py-6 flex items-center justify-between">
+          <div className="flex items-center gap-4 animate-fade-in">
+            <div className="w-12 h-12 gradient-accent rounded-2xl flex items-center justify-center shadow-glow-accent">
+              <DollarSign size={24} className="text-accent-foreground" />
             </div>
             <div>
-              <h1 className="text-xl font-bold">Investor Dashboard</h1>
+              <h1 className="text-2xl font-bold text-gradient">Investor Dashboard</h1>
               <p className="text-sm text-muted-foreground">Welcome back, {user?.name}</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={handleLoadDemoData} size="sm">
-              <TestTube size={16} className="mr-2" />
+          <div className="flex items-center gap-3">
+            <Button 
+              variant="outline" 
+              onClick={handleLoadDemoData} 
+              size="lg"
+              className="hover-lift border-2 hover:border-accent/50 hover:text-accent transition-all duration-200"
+            >
+              <TestTube size={18} className="mr-2" />
               Load Demo Data
             </Button>
-            <Button variant="outline" onClick={logout} size="sm">
-              <SignOut size={16} className="mr-2" />
+            <Button 
+              variant="outline" 
+              onClick={logout} 
+              size="lg"
+              className="hover-lift border-2 hover:border-destructive/50 hover:text-destructive transition-all duration-200"
+            >
+              <SignOut size={18} className="mr-2" />
               Logout
             </Button>
           </div>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="discover" className="flex items-center gap-2">
-              <Search size={16} />
+      <main className="container mx-auto px-6 py-8">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
+          <TabsList className="grid w-full grid-cols-2 p-1 bg-card/50 backdrop-blur-sm border shadow-md">
+            <TabsTrigger 
+              value="discover" 
+              className="flex items-center gap-2 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground transition-all duration-200 hover-scale"
+            >
+              <Search size={18} />
               Discover Projects
             </TabsTrigger>
-            <TabsTrigger value="portfolio" className="flex items-center gap-2">
-              <Portfolio size={16} />
+            <TabsTrigger 
+              value="portfolio" 
+              className="flex items-center gap-2 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground transition-all duration-200 hover-scale"
+            >
+              <Portfolio size={18} />
               My Portfolio
             </TabsTrigger>
           </TabsList>
           
-          <TabsContent value="discover" className="space-y-6">
+          <TabsContent value="discover" className="space-y-8 animate-fade-in">
             <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-2xl font-bold">Investment Opportunities</h2>
-                <p className="text-muted-foreground">Discover and fund agricultural projects</p>
+              <div className="animate-slide-up">
+                <h2 className="text-3xl font-bold text-gradient mb-2">Investment Opportunities</h2>
+                <p className="text-muted-foreground text-lg">Discover and fund promising agricultural projects</p>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-4">
                 <div className="relative">
-                  <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+                  <Search size={18} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
                   <Input
                     placeholder="Search projects..."
-                    className="pl-10 w-64"
+                    className="pl-12 w-80 h-12 border-2 transition-all duration-200 focus:border-accent focus:shadow-glow-accent bg-card/50 backdrop-blur-sm"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
@@ -145,30 +161,34 @@ export function InvestorDashboard() {
                 <Button
                   variant="outline"
                   onClick={() => setShowFilters(!showFilters)}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 h-12 px-6 hover-lift border-2 hover:border-accent/50"
                 >
-                  <SlidersHorizontal size={16} />
+                  <SlidersHorizontal size={18} />
                   Filters
                 </Button>
               </div>
             </div>
 
             {showFilters && (
-              <Card className="mb-6">
+              <Card className="mb-8 glass-effect animate-scale-in">
                 <CardHeader>
-                  <CardTitle className="text-lg">Filters</CardTitle>
+                  <CardTitle className="text-xl text-gradient">Filters</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-6">
                     <div className="space-y-2">
-                      <Label>Category</Label>
+                      <Label className="text-sm font-medium">Category</Label>
                       <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                        <SelectTrigger className="w-48">
+                        <SelectTrigger className="w-48 h-12 border-2 transition-all duration-200 focus:border-accent bg-card/50">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="glass-effect">
                           {categories.map(category => (
-                            <SelectItem key={category} value={category}>
+                            <SelectItem 
+                              key={category} 
+                              value={category}
+                              className="hover:bg-accent/10 cursor-pointer"
+                            >
                               {category === 'all' ? 'All Categories' : category}
                             </SelectItem>
                           ))}
