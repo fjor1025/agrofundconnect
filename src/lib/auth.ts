@@ -16,7 +16,7 @@ export interface AuthState {
 
 export function useAuth() {
   const [currentUser, setCurrentUser] = useKV<User | null>('current-user', null)
-  const [isLoading, setIsLoading] = useKV('auth-loading', false)
+  const [isLoading, setIsLoading] = useKV<boolean>('auth-loading', false)
 
   const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     setIsLoading(true)

@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import { Toaster } from '@/components/ui/sonner'
+import React, { useState } from 'react'
 import { LoginScreen } from '@/components/auth/LoginScreen'
 import { RegisterScreen } from '@/components/auth/RegisterScreen'
 import { FarmerDashboard } from '@/components/dashboards/FarmerDashboard'
@@ -30,7 +29,6 @@ function App() {
         ) : (
           <LoginScreen onSwitch={() => setShowRegister(true)} />
         )}
-        <Toaster />
       </>
     )
   }
@@ -51,7 +49,6 @@ function App() {
   return (
     <>
       {renderDashboard()}
-      <Toaster />
     </>
   )
 }
